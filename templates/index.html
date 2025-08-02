@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - TaskTracker{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h1>
+        <p class="text-muted">Overview of your task management system</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary">
+            <div class="card-body text-center">
+                <i class="fas fa-tasks fa-2x mb-2"></i>
+                <h4 class="card-title">{{ total_tasks }}</h4>
+                <p class="card-text">Total Tasks</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success">
+            <div class="card-body text-center">
+                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                <h4 class="card-title">{{ completed_tasks }}</h4>
+                <p class="card-text">Completed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning">
+            <div class="card-body text-center">
+                <i class="fas fa-clock fa-2x mb-2"></i>
+                <h4 class="card-title">{{ in_progress_tasks }}</h4>
+                <p class="card-text">In Progress</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info">
+            <div class="card-body text-center">
+                <i class="fas fa-users fa-2x mb-2"></i>
+                <h4 class="card-title">{{ user_stats.total_users }}</h4>
+                <p class="card-text">Total Users</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Tasks -->
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Tasks</h5>
+                <a href="{{ url_for('tasks') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_tasks %}
+                    <div class="list-group list-group-flush">
+                        {% for task in recent_tasks %}
+                            <div class="list-group-item d-flex justify-content-between align-items-start">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">
+                                        <a href="{{ url_for('task_detail', task_id=task.id) }}" class="text-decoration-none">
+                                            {{ task.title }}
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">
+                                        {% if task.assignees %}
+                                            Assigned to: {{ task.assignees|map(attribute='name')|join(', ') }}
+                                        {% else %}
+                                            Unassigned
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-{{ task.status_class }} mb-1">{{ task.status }}</span><br>
+                                    <span class="badge bg-{{ task.priority_class }} priority-badge">{{ task.priority }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No tasks yet. <a href="{{ url_for('new_task') }}">Create your first task</a>!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions & User Stats -->
+    <div class="col-md-4">
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('new_task') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Create Task
+                    </a>
+                    <a href="{{ url_for('new_user') }}" class="btn btn-secondary">
+                        <i class="fas fa-user-plus me-2"></i>Add User
+                    </a>
+                    <a href="{{ url_for('tasks') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-list me-2"></i>View All Tasks
+                    </a>
+                    <a href="{{ url_for('users') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-users me-2"></i>Manage Users
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Statistics -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>User Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6 mb-3">
+                        <h6 class="text-success">{{ user_stats.users_with_tasks }}</h6>
+                        <small class="text-muted">With Tasks</small>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <h6 class="text-warning">{{ user_stats.users_without_tasks }}</h6>
+                        <small class="text-muted">Available</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
