@@ -4,6 +4,8 @@ A comprehensive task tracking web application built with Flask and SQLAlchemy th
 
 ## Features
 
+
+
 ### Task Management
 - **CRUD Operations**: Create, read, update, and delete tasks
 - **Task Properties**: Each task includes:
